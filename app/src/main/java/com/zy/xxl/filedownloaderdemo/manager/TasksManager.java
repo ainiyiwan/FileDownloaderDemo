@@ -8,6 +8,7 @@ import com.liulishuo.filedownloader.FileDownloadConnectListener;
 import com.liulishuo.filedownloader.FileDownloader;
 import com.liulishuo.filedownloader.model.FileDownloadStatus;
 import com.liulishuo.filedownloader.util.FileDownloadUtils;
+import com.zy.xxl.filedownloaderdemo.activity.AddTaskActivity;
 import com.zy.xxl.filedownloaderdemo.activity.TasksManagerDemoActivity;
 import com.zy.xxl.filedownloaderdemo.adapter.TaskItemViewHolder;
 import com.zy.xxl.filedownloaderdemo.constant.Constant;
@@ -41,7 +42,7 @@ public class TasksManager {
         dbController = new TasksManagerDBController();
         modelList = dbController.getAllTasks();
 
-        initDemo();
+//        initDemo();
     }
 
     private void initDemo() {
@@ -79,7 +80,38 @@ public class TasksManager {
 
     private FileDownloadConnectListener listener;
 
-    private void registerServiceConnectionListener(final WeakReference<TasksManagerDemoActivity>
+    private void registerServiceConnectionListener1(final WeakReference<TasksManagerDemoActivity> activityWeakReference) {
+        if (listener != null) {
+            FileDownloader.getImpl().removeServiceConnectListener(listener);
+        }
+
+        listener = new FileDownloadConnectListener() {
+
+            @Override
+            public void connected() {
+                if (activityWeakReference == null
+                        || activityWeakReference.get() == null) {
+                    return;
+                }
+
+                activityWeakReference.get().postNotifyDataChanged();
+            }
+
+            @Override
+            public void disconnected() {
+                if (activityWeakReference == null
+                        || activityWeakReference.get() == null) {
+                    return;
+                }
+
+                activityWeakReference.get().postNotifyDataChanged();
+            }
+        };
+
+        FileDownloader.getImpl().addServiceConnectListener(listener);
+    }
+
+    private void registerServiceConnectionListener(final WeakReference<AddTaskActivity>
                                                            activityWeakReference) {
         if (listener != null) {
             FileDownloader.getImpl().removeServiceConnectListener(listener);
@@ -116,7 +148,14 @@ public class TasksManager {
         listener = null;
     }
 
-    public void onCreate(final WeakReference<TasksManagerDemoActivity> activityWeakReference) {
+    public void onCreate1(final WeakReference<TasksManagerDemoActivity> activityWeakReference) {
+        if (!FileDownloader.getImpl().isServiceConnected()) {
+            FileDownloader.getImpl().bindService();
+            registerServiceConnectionListener1(activityWeakReference);
+        }
+    }
+
+    public void onCreate(final WeakReference<AddTaskActivity> activityWeakReference) {
         if (!FileDownloader.getImpl().isServiceConnected()) {
             FileDownloader.getImpl().bindService();
             registerServiceConnectionListener(activityWeakReference);

@@ -27,6 +27,17 @@ public interface Constant {
             "http://121.18.239.1/f4.market.xiaomi.com/download/AppStore/0f458c5661acb492e30b808a2e3e4c8672e6b55e2/com.netease.cloudmusic.apk"
     };
 
+    String[] BING_FILE_NAME = {
+            "摩拜单车",
+            "微信",
+            "新浪微博",
+            "QQ",
+            "陌陌",
+            "手机淘宝",
+            "酷狗音乐",
+            "网易云音乐"
+    };
+
     String[] BIG_ICON_URLS = {
             //摩拜单车
             "http://file.market.xiaomi.com/thumbnail/PNG/l114/AppStore/0863a058a811148a5174d9784b7be2f1114191f83",

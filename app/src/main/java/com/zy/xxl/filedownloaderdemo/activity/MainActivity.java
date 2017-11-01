@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
 
     //添加下载
     public void addTask(View view) {
-
+        startActivity(new Intent(MainActivity.this, AddTaskActivity.class));
     }
 
     //任务管理器

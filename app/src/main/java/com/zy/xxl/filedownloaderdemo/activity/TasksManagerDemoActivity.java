@@ -32,7 +32,7 @@ public class TasksManagerDemoActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter = new TaskItemAdapter());
 
 
-        TasksManager.getImpl().onCreate(new WeakReference<>(this));
+        TasksManager.getImpl().onCreate1(new WeakReference<>(this));
     }
 
     public void postNotifyDataChanged() {

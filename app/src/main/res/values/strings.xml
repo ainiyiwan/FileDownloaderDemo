@@ -11,6 +11,7 @@
     <string name="tasks_manager_demo_status_connected">状态: 已连接上</string>
     <string name="tasks_manager_demo_status_progress">状态: 下载中...</string>
     <string name="tasks_manager_demo_status_downloading" formatted="false">状态: 正在下载 %d</string>
+    <string name="add_tasks_demo_status_downloading" formatted="false">正在下载:%s</string>
     <string name="tasks_manager_demo_status_error">状态: 出错</string>
     <string name="tasks_manager_demo_status_paused">状态: 暂停</string>
     <string name="tasks_manager_demo_status_completed">状态: 下载完成</string>
