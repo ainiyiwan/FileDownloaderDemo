@@ -33,6 +33,8 @@ public class TasksManagerDemoActivity extends AppCompatActivity {
 
 
         TasksManager.getImpl().onCreate1(new WeakReference<>(this));
+        TasksManager.getImpl().initData();
+//        FileDownloader.getImpl().pauseAll();
     }
 
     public void postNotifyDataChanged() {

@@ -36,6 +36,11 @@ public class TaskItemViewHolder extends RecyclerView.ViewHolder {
      */
     public int id;
 
+    /**
+     * 干嘛用的
+     * @param id
+     * @param position
+     */
     public void update(final int id, final int position) {
         this.id = id;
         this.position = position;
@@ -76,8 +81,7 @@ public class TaskItemViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void updateDownloading(final int status, final long sofar, final long total) {
-        final float percent = sofar
-                / (float) total;
+        final float percent = sofar / (float) total;
         taskPb.setMax(100);
         taskPb.setProgress((int) (percent * 100));
 

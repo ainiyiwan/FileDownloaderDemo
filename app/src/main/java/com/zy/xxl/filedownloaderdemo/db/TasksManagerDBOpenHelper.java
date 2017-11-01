@@ -15,11 +15,14 @@ public class TasksManagerDBOpenHelper extends SQLiteOpenHelper {
     public final static String DATABASE_NAME = "tasksmanager.db";
     public final static int DATABASE_VERSION = 3;
 
+    //第四步 到了这个构造方法 就是建表 其实也就是第一次建表
     public TasksManagerDBOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
 
+
+    //第一次执行建表 后面并不执行
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS "

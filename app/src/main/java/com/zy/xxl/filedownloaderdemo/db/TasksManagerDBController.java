@@ -22,12 +22,19 @@ public class TasksManagerDBController {
     public final static String TABLE_NAME = "tasksmanger";
     private final SQLiteDatabase db;
 
+    //第三步 到了这个构造方法
     public TasksManagerDBController() {
         TasksManagerDBOpenHelper openHelper = new TasksManagerDBOpenHelper(MyApplication.CONTEXT);
 
         db = openHelper.getWritableDatabase();
     }
 
+    /**
+     * 第五步 获取任务 每次进来都要获取任务  任务只能从这里获取 TasksManager已经不管作用了
+     * 实际上 这个页面完全是本地的 所以 这里可以看做是服务器 改变思维吧 骚年
+     * 把原来要向服务器进行的操作 都放到这里 这么来说TasksManager倒像是一个本地 数据放在那里自然是不靠谱的
+     * @return
+     */
     public List<TasksManagerModel> getAllTasks() {
         final Cursor c = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
 
@@ -54,6 +61,7 @@ public class TasksManagerDBController {
         return list;
     }
 
+    //这里只有addTask一个类可以调 等于是上传服务器
     public TasksManagerModel addTask(final String url, final String path) {
         if (TextUtils.isEmpty(url) || TextUtils.isEmpty(path)) {
             return null;
@@ -71,6 +79,8 @@ public class TasksManagerDBController {
         final boolean succeed = db.insert(TABLE_NAME, null, model.toContentValues()) != -1;
         return succeed ? model : null;
     }
+
+
 
 
 }
