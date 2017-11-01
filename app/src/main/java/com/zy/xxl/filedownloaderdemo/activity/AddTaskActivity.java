@@ -5,12 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.liulishuo.filedownloader.BaseDownloadTask;
-import com.liulishuo.filedownloader.FileDownloader;
 import com.zy.xxl.filedownloaderdemo.R;
 import com.zy.xxl.filedownloaderdemo.adapter.AddTaskAdapter;
 import com.zy.xxl.filedownloaderdemo.constant.Constant;
-import com.zy.xxl.filedownloaderdemo.manager.DownloadManager;
 import com.zy.xxl.filedownloaderdemo.manager.TasksManager;
 import com.zy.xxl.filedownloaderdemo.model.AddTaskModel;
 
@@ -42,23 +39,6 @@ public class AddTaskActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(addTaskAdapter);
 
-        final DownloadManager.DownloadStatusUpdater aActivityUpdater = new DownloadManager.DownloadStatusUpdater(){
-
-            @Override
-            public void blockComplete(BaseDownloadTask task) {
-
-            }
-
-            @Override
-            public void update(BaseDownloadTask task) {
-
-            }
-        };
-
-        DownloadManager.getImpl().addUpdater(aActivityUpdater);
-
-
-
     }
 
     private void getData() {
@@ -87,6 +67,9 @@ public class AddTaskActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        FileDownloader.getImpl().pauseAll();
+//        FileDownloader.getImpl().pauseAll();
+//        DownloadManager.getImpl().removeUpdater(aActivityUpdater);
+
+
     }
 }

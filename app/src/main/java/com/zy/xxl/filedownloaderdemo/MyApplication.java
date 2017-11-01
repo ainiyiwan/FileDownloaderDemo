@@ -34,7 +34,7 @@ public class MyApplication extends Application {
          * @see FileDownloader#init(Context)
          */
         FileDownloader.setupOnApplicationOnCreate(this)
-                .maxNetworkThreadCount(3)
+                .maxNetworkThreadCount(1)
                 .connectionCreator(new FileDownloadUrlConnection
                         .Creator(new FileDownloadUrlConnection.Configuration()
                         .connectTimeout(15_000) // set connection timeout.
