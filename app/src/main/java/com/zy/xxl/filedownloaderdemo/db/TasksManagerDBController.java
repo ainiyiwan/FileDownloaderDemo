@@ -6,7 +6,6 @@ import android.text.TextUtils;
 
 import com.liulishuo.filedownloader.util.FileDownloadUtils;
 import com.zy.xxl.filedownloaderdemo.MyApplication;
-import com.zy.xxl.filedownloaderdemo.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +61,7 @@ public class TasksManagerDBController {
     }
 
     //这里只有addTask一个类可以调 等于是上传服务器
-    public TasksManagerModel addTask(final String url, final String path) {
+    public TasksManagerModel addTask(final String url, final String path, final String name) {
         if (TextUtils.isEmpty(url) || TextUtils.isEmpty(path)) {
             return null;
         }
@@ -72,12 +71,23 @@ public class TasksManagerDBController {
 
         TasksManagerModel model = new TasksManagerModel();
         model.setId(id);
-        model.setName(MyApplication.CONTEXT.getString(R.string.tasks_manager_demo_name, id));
+        model.setName(name);
         model.setUrl(url);
         model.setPath(path);
 
         final boolean succeed = db.insert(TABLE_NAME, null, model.toContentValues()) != -1;
         return succeed ? model : null;
+    }
+
+    public boolean delTask(final String path){
+        if (TextUtils.isEmpty(path)){
+            return false;
+        }
+        return db.delete(TABLE_NAME, "PATH = ?", new String[]{path}) != 0;
+    }
+
+    public boolean delAll(){
+        return db.delete(TABLE_NAME, null, null) != 0;
     }
 
 

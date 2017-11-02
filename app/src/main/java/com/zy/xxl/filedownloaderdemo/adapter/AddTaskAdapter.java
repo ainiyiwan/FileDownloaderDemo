@@ -49,22 +49,32 @@ public class AddTaskAdapter extends BaseQuickAdapter<AddTaskModel, BaseViewHolde
 
         helper.setText(R.id.task_name_tv, model.name);
 
-        final int id = FileDownloadUtils.generateId(model.url, TasksManager.getImpl().createPath(model.url));
+        final int id = FileDownloadUtils.generateId(model.url, TasksManager.getImpl().createPath(model.name));
         if (TasksManager.getImpl().isReady()) {
-            final int status = TasksManager.getImpl().getStatus(id
-                    , TasksManager.getImpl().createPath(model.url));
-            if (status == FileDownloadStatus.pending || status == FileDownloadStatus.started ||
-                    status == FileDownloadStatus.connected) {
+            final int status = TasksManager.getImpl().getStatus(id, TasksManager.getImpl().createPath(model.name));
+            if (status == FileDownloadStatus.pending) {
                 // start task, but file not created yet
-                helper.setText(R.id.task_status_tv, "progress 下载中");
-            } else if (TasksManager.getImpl().isDownloaded(status)) {
+                helper.setText(R.id.task_status_tv, "progress 等待中");
+            } else if (status == FileDownloadStatus.connected){
+                helper.setText(R.id.task_status_tv, "connected 连接中");
+            } else if (status == FileDownloadStatus.started){
+                helper.setText(R.id.task_status_tv, "start 开始");
+            }else if (status == FileDownloadStatus.paused){
+                helper.setText(R.id.task_status_tv, "pause 暂停");
+            }else if (TasksManager.getImpl().isDownloaded(status)) {
                 // already downloaded and exist
                 helper.setText(R.id.task_status_tv, "completed 下载完成");
             } else if (status == FileDownloadStatus.progress) {
                 // downloading
-                helper.setText(R.id.task_status_tv, "progress 下载中");
-            } else {
+                long sofar = TasksManager.getImpl().getSoFar(id);
+                long total = TasksManager.getImpl().getTotal(id);
+                final float percent = sofar / (float) total;
+                int progress = (int) (percent * 100);
+                helper.setText(R.id.task_status_tv, "progress 下载中" + progress);
+            } else if (status == FileDownloadStatus.error){
                 // not start
+                helper.setText(R.id.task_status_tv, "error 错误");
+            }else {
                 helper.setText(R.id.task_status_tv, "not start 未开始");
             }
 
@@ -77,8 +87,8 @@ public class AddTaskAdapter extends BaseQuickAdapter<AddTaskModel, BaseViewHolde
             public void onClick(View view) {
 
                 helper.getView(R.id.task_action_btn).setClickable(false);
-                DownloadManager.getImpl().startDownload(model.url, TasksManager.getImpl().createPath(model.url));
-                TasksManager.getImpl().addTask(model.url);
+                DownloadManager.getImpl().startDownload(model.url, TasksManager.getImpl().createPath(model.name));
+                TasksManager.getImpl().addTask(model.url, model.name);
             }
         });
 
@@ -101,7 +111,7 @@ public class AddTaskAdapter extends BaseQuickAdapter<AddTaskModel, BaseViewHolde
                                 helper.setText(R.id.task_status_tv, "connect 正在连接");
                                 break;
                             case FileDownloadStatus.started:
-                                helper.setText(R.id.task_status_tv, "start 开始");
+                                helper.setText(R.id.task_status_tv, "start 开始下载");
                                 break;
                             case FileDownloadStatus.progress:
                                 int sofar = task.getSmallFileSoFarBytes();
@@ -132,63 +142,3 @@ public class AddTaskAdapter extends BaseQuickAdapter<AddTaskModel, BaseViewHolde
     }
 
 }
-
-
-//helper.getView(R.id.task_action_btn).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                TasksManager manager = TasksManager.getImpl();
-//                manager.addTask(model.url);//向数据库写入任务
-//                final BaseDownloadTask task = FileDownloader.getImpl().create(model.url)
-//                        .setPath(manager.createPath(model.url))
-//                        .setCallbackProgressTimes(100)
-//                        .setListener(TasksManager.getImpl().getListener());
-//
-////                new FileDownloadSampleListener(){
-////                    @Override
-////                    protected void pending(BaseDownloadTask task, int soFarBytes, int totalBytes) {
-////                        super.pending(task, soFarBytes, totalBytes);
-////                        helper.setText(R.id.task_status_tv, "pending 等待中");
-////                    }
-////
-////                    @Override
-////                    protected void progress(BaseDownloadTask task, int soFarBytes, int totalBytes) {
-////                        super.progress(task, soFarBytes, totalBytes);
-////                        helper.setText(R.id.task_status_tv, "progress 下载中");
-////                    }
-////
-////                    @Override
-////                    protected void blockComplete(BaseDownloadTask task) {
-////                        super.blockComplete(task);
-////                    }
-////
-////                    @Override
-////                    protected void completed(BaseDownloadTask task) {
-////                        super.completed(task);
-////                        helper.setText(R.id.task_status_tv, "completed 下载完成");
-////                    }
-////
-////                    @Override
-////                    protected void paused(BaseDownloadTask task, int soFarBytes, int totalBytes) {
-////                        super.paused(task, soFarBytes, totalBytes);
-////                    }
-////
-////                    @Override
-////                    protected void error(BaseDownloadTask task, Throwable e) {
-////                        super.error(task, e);
-////                        helper.setText(R.id.task_status_tv, "error 下载错误");
-////                    }
-////
-////                    @Override
-////                    protected void warn(BaseDownloadTask task) {
-////                        super.warn(task);
-////                        helper.setText(R.id.task_status_tv, "warn 下载错误");
-////                    }
-////                };
-//                // TODO: 2017/11/1 感觉没用注释掉
-////                TasksManager.getImpl().addTaskForViewHolder(task);
-//                task.start();
-//            }
-//        });
-

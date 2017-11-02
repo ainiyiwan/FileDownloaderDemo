@@ -2,23 +2,18 @@ package com.zy.xxl.filedownloaderdemo.manager;
 
 import android.text.TextUtils;
 import android.util.SparseArray;
-import android.widget.Toast;
 
 import com.liulishuo.filedownloader.BaseDownloadTask;
 import com.liulishuo.filedownloader.FileDownloadConnectListener;
-import com.liulishuo.filedownloader.FileDownloadListener;
-import com.liulishuo.filedownloader.FileDownloadSampleListener;
 import com.liulishuo.filedownloader.FileDownloader;
 import com.liulishuo.filedownloader.model.FileDownloadStatus;
 import com.liulishuo.filedownloader.util.FileDownloadUtils;
-import com.zy.xxl.filedownloaderdemo.MyApplication;
 import com.zy.xxl.filedownloaderdemo.activity.AddTaskActivity;
 import com.zy.xxl.filedownloaderdemo.activity.TasksManagerDemoActivity;
-import com.zy.xxl.filedownloaderdemo.adapter.TaskItemViewHolder;
-import com.zy.xxl.filedownloaderdemo.constant.Constant;
 import com.zy.xxl.filedownloaderdemo.db.TasksManagerDBController;
 import com.zy.xxl.filedownloaderdemo.db.TasksManagerModel;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
@@ -47,53 +42,16 @@ public class TasksManager {
         dbController = new TasksManagerDBController();//第三步 第四步
         modelList = dbController.getAllTasks();//第五步
 
-        // TODO: 2017/11/1 delete 
-//        initDemo();
     }
 
-    //第二步 不能用这里的数据源所以注释掉这里的代码 或者后期删除
-    // TODO: 2017/11/1 delete 
-    private void initDemo() {
-        if (modelList.size() <= 0) {
-            final int demoSize = Constant.BIG_FILE_URLS.length;
-            for (int i = 0; i < demoSize; i++) {
-                final String url = Constant.BIG_FILE_URLS[i];
-                addTask(url);
-            }
-        }
-    }
 
-    public void initData(){
+    public List<TasksManagerModel> initData(){
         modelList = dbController.getAllTasks();//第五步
+        return modelList;
     }
 
     private SparseArray<BaseDownloadTask> taskSparseArray = new SparseArray<>();
 
-    //实际上都是为了viewholder 我觉得这种操作没有多大用处 而且服务器也不会去存储 那么 就去掉所有的关于存储viewHolder的操作吧 窝草 已经没有做这种操作了
-    // FIXME: 2017/11/1 delete
-    public void addTaskForViewHolder(final BaseDownloadTask task) {
-        taskSparseArray.put(task.getId(), task);
-    }
-
-    public void removeTaskForViewHolder(final int id) {
-        taskSparseArray.remove(id);
-    }
-
-    /**
-     * 第十步
-     * 这里服务端记住也是没用的 所以这里也要删除
-     * @param id
-     * @param holder
-     */
-    // FIXME: 2017/11/1 delete
-    public void updateViewHolder(final int id, final TaskItemViewHolder holder) {
-        final BaseDownloadTask task = taskSparseArray.get(id);
-        if (task == null) {
-            return;
-        }
-
-        task.setTag(holder);
-    }
 
     public void releaseTask() {
         taskSparseArray.clear();
@@ -250,8 +208,8 @@ public class TasksManager {
      * @param url
      * @return
      */
-    public TasksManagerModel addTask(final String url) {
-        return addTask(url, createPath(url));
+    public TasksManagerModel addTask(final String url, final String name) {
+        return addTask(url, createPath(name), name);
     }
 
     /**
@@ -259,110 +217,37 @@ public class TasksManager {
      * @param url
      * @return
      */
-    public TasksManagerModel addTask(final String url, final String path) {
+    public TasksManagerModel addTask(final String url, final String path, final String name) {
         if (TextUtils.isEmpty(url) || TextUtils.isEmpty(path)) {
             return null;
         }
-
-        /**
-         * 这一块我看不到有任何用处  必须明白一点 现在上传服务的操作 只能有一个地方 那就是 addTask这个类 其他的类只是查询
-         */
-//        final int id = FileDownloadUtils.generateId(url, path);
-//        TasksManagerModel model = getById(id);//这个应该是没用的
-//        if (model != null) {
-//            return model;
-//        }
-        final TasksManagerModel newModel = dbController.addTask(url, path);
-        // FIXME: 2017/11/1 那么我认为 这里也是没用的 所以这个方法其实可以改为void
-//        if (newModel != null) {
-//            modelList.add(newModel);//这里的用处是？
-//        }
-
+        final TasksManagerModel newModel = dbController.addTask(url, path, name);
         return newModel;
+    }
+
+    public boolean delTask(final String path){
+        if (TextUtils.isEmpty(path)){
+            return false;
+        }
+        return dbController.delTask(path);
+    }
+
+    public boolean delAll(){
+        return dbController.delAll();
     }
 
     /**
      * 创造路径
-     * @param url
+     * @param name
      * @return
      */
-    public String createPath(final String url) {
-        if (TextUtils.isEmpty(url)) {
+    public String createPath(final String name) {
+        if (TextUtils.isEmpty(name)) {
             return null;
         }
 
-        return FileDownloadUtils.getDefaultSaveFilePath(url);
-    }
-
-
-    public FileDownloadListener getListener(){
-         FileDownloadListener taskDownloadListener = new FileDownloadSampleListener() {
-
-
-            @Override
-            protected void pending(BaseDownloadTask task, int soFarBytes, int totalBytes) {
-                super.pending(task, soFarBytes, totalBytes);
-
-//                tag.updateDownloading(FileDownloadStatus.pending, soFarBytes
-//                        , totalBytes);
-//                tag.taskStatusTv.setText(R.string.tasks_manager_demo_status_pending);
-                Toast.makeText(MyApplication.CONTEXT,"等待",Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            protected void started(BaseDownloadTask task) {
-                super.started(task);
-                Toast.makeText(MyApplication.CONTEXT,"开始",Toast.LENGTH_LONG).show();
-//                tag.taskStatusTv.setText(R.string.tasks_manager_demo_status_started);
-            }
-
-            @Override
-            protected void connected(BaseDownloadTask task, String etag, boolean isContinue, int soFarBytes, int totalBytes) {
-                super.connected(task, etag, isContinue, soFarBytes, totalBytes);
-
-//                tag.updateDownloading(FileDownloadStatus.connected, soFarBytes
-//                        , totalBytes);
-//                tag.taskStatusTv.setText(R.string.tasks_manager_demo_status_connected);
-            }
-
-            @Override
-            protected void progress(BaseDownloadTask task, int soFarBytes, int totalBytes) {
-                super.progress(task, soFarBytes, totalBytes);
-                final float percent = soFarBytes / (float) totalBytes;
-
-                Toast.makeText(MyApplication.CONTEXT,"进行中" + (int) (percent * 100),Toast.LENGTH_LONG).show();
-//                tag.updateDownloading(FileDownloadStatus.progress, soFarBytes
-//                        , totalBytes);
-            }
-
-            @Override
-            protected void error(BaseDownloadTask task, Throwable e) {
-                super.error(task, e);
-
-//                tag.updateNotDownloaded(FileDownloadStatus.error, task.getLargeFileSoFarBytes()
-//                        , task.getLargeFileTotalBytes());
-//                TasksManager.getImpl().removeTaskForViewHolder(task.getId());
-            }
-
-            @Override
-            protected void paused(BaseDownloadTask task, int soFarBytes, int totalBytes) {
-                super.paused(task, soFarBytes, totalBytes);
-                Toast.makeText(MyApplication.CONTEXT,"暂停",Toast.LENGTH_LONG).show();
-//                tag.updateNotDownloaded(FileDownloadStatus.paused, soFarBytes, totalBytes);
-//                tag.taskStatusTv.setText(R.string.tasks_manager_demo_status_paused);
-//                TasksManager.getImpl().removeTaskForViewHolder(task.getId());
-            }
-
-            @Override
-            protected void completed(BaseDownloadTask task) {
-                super.completed(task);
-                Toast.makeText(MyApplication.CONTEXT,"完成",Toast.LENGTH_LONG).show();
-//                tag.updateDownloaded();
-//                TasksManager.getImpl().removeTaskForViewHolder(task.getId());
-            }
-        };
-
-         return taskDownloadListener;
+//        return FileDownloadUtils.getDefaultSaveFilePath(url);
+        return FileDownloadUtils.getDefaultSaveRootPath() + File.separator + "MRXZMedia" + File.separator+ name + ".apk";
     }
 
 }

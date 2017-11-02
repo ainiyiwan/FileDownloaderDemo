@@ -44,7 +44,7 @@ public class AddTaskActivity extends AppCompatActivity {
 
     private void getData() {
         final int demoSize = Constant.BIG_FILE_URLS.length;
-        for (int i = 0; i < demoSize - 4; i++) {
+        for (int i = 0; i < demoSize; i++) {
             AddTaskModel model = new AddTaskModel(Constant.BING_FILE_NAME[i],
                     Constant.BIG_FILE_URLS[i],
                     Constant.BIG_ICON_URLS[i]);

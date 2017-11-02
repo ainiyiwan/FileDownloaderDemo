@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.liulishuo.filedownloader.BaseDownloadTask;
 import com.liulishuo.filedownloader.model.FileDownloadStatus;
@@ -36,7 +37,7 @@ public class TaskItemAdapter extends RecyclerView.Adapter<TaskItemViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(final TaskItemViewHolder holder, int position) {
+    public void onBindViewHolder(final TaskItemViewHolder holder, final int position) {
         final TasksManagerModel model = TasksManager.getImpl().get(position);//第九步 实际上就是我们熟悉的操作了 窝草 已经没有这种操作了
 
         holder.update(model.getId(), position);//干嘛用的
@@ -51,10 +52,19 @@ public class TaskItemAdapter extends RecyclerView.Adapter<TaskItemViewHolder> {
         holder.taskActionBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                CharSequence action = ((TextView) v).getText();
+                if (action.equals(v.getResources().getString(R.string.delete))) {
+                    // to delete
+                    boolean delSuc = TasksManager.getImpl().delTask(model.getPath());
+                    if (delSuc){
+                        new File(TasksManager.getImpl().get(holder.position).getPath()).delete();
+                        TasksManager.getImpl().initData();
+                        notifyItemRemoved(holder.getAdapterPosition());
+                    }
+                }
             }
         });
-        final int id = FileDownloadUtils.generateId(model.getUrl(), TasksManager.getImpl().createPath(model.getUrl()));
+        final int id = FileDownloadUtils.generateId(model.getUrl(), TasksManager.getImpl().createPath(model.getName()));
 
         /**
          * 下面的状态要根据上面搞 所以这里先看上面

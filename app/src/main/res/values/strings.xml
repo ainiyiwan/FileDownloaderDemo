@@ -20,4 +20,8 @@
     <string name="start">开始</string>
     <string name="pause">暂停</string>
     <string name="delete">删除</string>
+
+    <string name="course_all_start">全部开始</string>
+    <string name="course_all_stop">全部暂停</string>
+    <string name="all_del">全部删除</string>
 </resources>
