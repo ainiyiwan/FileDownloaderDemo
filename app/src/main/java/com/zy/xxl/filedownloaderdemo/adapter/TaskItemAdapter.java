@@ -4,14 +4,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.liulishuo.filedownloader.BaseDownloadTask;
-import com.liulishuo.filedownloader.FileDownloader;
 import com.liulishuo.filedownloader.model.FileDownloadStatus;
 import com.liulishuo.filedownloader.util.FileDownloadUtils;
 import com.zy.xxl.filedownloaderdemo.R;
 import com.zy.xxl.filedownloaderdemo.db.TasksManagerModel;
+import com.zy.xxl.filedownloaderdemo.manager.DownloadManager;
 import com.zy.xxl.filedownloaderdemo.manager.TasksManager;
 
 import java.io.File;
@@ -25,156 +24,6 @@ import java.io.File;
 
 public class TaskItemAdapter extends RecyclerView.Adapter<TaskItemViewHolder> {
 
-    /**
-     * 这个listener 应该用于全部开始
-     */
-//    private FileDownloadListener taskDownloadListener = new FileDownloadSampleListener() {
-//
-//        /**
-//         * 第十一步 还检查个毛啊 已经没有存储了 不用又当爹又当娘了
-//         * @param task
-//         * @param soFarBytes
-//         * @param totalBytes
-//         */
-////        private TaskItemViewHolder checkCurrentHolder(final BaseDownloadTask task) {
-////            final TaskItemViewHolder tag = (TaskItemViewHolder) task.getTag();
-////            if (tag.id != task.getId()) {
-////                return null;
-////            }
-////
-////            return tag;
-////        }
-//
-//        @Override
-//        protected void pending(BaseDownloadTask task, int soFarBytes, int totalBytes) {
-//            super.pending(task, soFarBytes, totalBytes);
-//            final TaskItemViewHolder tag = checkCurrentHolder(task);
-//            if (tag == null) {
-//                return;
-//            }
-//
-//            tag.updateDownloading(FileDownloadStatus.pending, soFarBytes
-//                    , totalBytes);
-//            tag.taskStatusTv.setText(R.string.tasks_manager_demo_status_pending);
-//        }
-//
-//        @Override
-//        protected void started(BaseDownloadTask task) {
-//            super.started(task);
-//            final TaskItemViewHolder tag = checkCurrentHolder(task);
-//            if (tag == null) {
-//                return;
-//            }
-//
-//            tag.taskStatusTv.setText(R.string.tasks_manager_demo_status_started);
-//        }
-//
-//        @Override
-//        protected void connected(BaseDownloadTask task, String etag, boolean isContinue, int soFarBytes, int
-//                totalBytes) {
-//            super.connected(task, etag, isContinue, soFarBytes, totalBytes);
-//            final TaskItemViewHolder tag = checkCurrentHolder(task);
-//            if (tag == null) {
-//                return;
-//            }
-//
-//            tag.updateDownloading(FileDownloadStatus.connected, soFarBytes
-//                    , totalBytes);
-//            tag.taskStatusTv.setText(R.string.tasks_manager_demo_status_connected);
-//        }
-//
-//        @Override
-//        protected void progress(BaseDownloadTask task, int soFarBytes, int totalBytes) {
-//            super.progress(task, soFarBytes, totalBytes);
-//            final TaskItemViewHolder tag = checkCurrentHolder(task);
-//            if (tag == null) {
-//                return;
-//            }
-//
-//            tag.updateDownloading(FileDownloadStatus.progress, soFarBytes
-//                    , totalBytes);
-//        }
-//
-//        @Override
-//        protected void error(BaseDownloadTask task, Throwable e) {
-//            super.error(task, e);
-//            final TaskItemViewHolder tag = checkCurrentHolder(task);
-//            if (tag == null) {
-//                return;
-//            }
-//
-//            tag.updateNotDownloaded(FileDownloadStatus.error, task.getLargeFileSoFarBytes()
-//                    , task.getLargeFileTotalBytes());
-//            TasksManager.getImpl().removeTaskForViewHolder(task.getId());
-//        }
-//
-//        @Override
-//        protected void paused(BaseDownloadTask task, int soFarBytes, int totalBytes) {
-//            super.paused(task, soFarBytes, totalBytes);
-//            final TaskItemViewHolder tag = checkCurrentHolder(task);
-//            if (tag == null) {
-//                return;
-//            }
-//
-//            tag.updateNotDownloaded(FileDownloadStatus.paused, soFarBytes, totalBytes);
-//            tag.taskStatusTv.setText(R.string.tasks_manager_demo_status_paused);
-//            TasksManager.getImpl().removeTaskForViewHolder(task.getId());
-//        }
-//
-//        @Override
-//        protected void completed(BaseDownloadTask task) {
-//            super.completed(task);
-//            final TaskItemViewHolder tag = checkCurrentHolder(task);
-//            if (tag == null) {
-//                return;
-//            }
-//
-//            tag.updateDownloaded();
-//            TasksManager.getImpl().removeTaskForViewHolder(task.getId());
-//        }
-//    };
-
-    /**
-     * 如此说来 也没有下面的这个 操作 不过这个
-     *
-     * 这个也是用去全部开始
-     */
-//    private View.OnClickListener taskActionOnClickListener = new View.OnClickListener() {
-//        @Override
-//        public void onClick(View v) {
-////            if (v.getTag() == null) {
-////                return;
-////            }
-//
-////            TaskItemViewHolder holder = (TaskItemViewHolder) v.getTag();
-//
-//            CharSequence action = ((TextView) v).getText();
-//            if (action.equals(v.getResources().getString(R.string.pause))) {
-//                // to pause
-//                FileDownloader.getImpl().pause(holder.id);
-//            } else if (action.equals(v.getResources().getString(R.string.start))) {
-//                // to start
-//                // to start
-//                final TasksManagerModel model = TasksManager.getImpl().get(holder.position);
-//                final BaseDownloadTask task = FileDownloader.getImpl().create(model.getUrl())
-//                        .setPath(model.getPath())
-//                        .setCallbackProgressTimes(100)
-//                        .setListener(taskDownloadListener);
-//
-//                // TODO: 2017/11/1 感觉没用先注释掉
-////                TasksManager.getImpl().addTaskForViewHolder(task);
-////
-////                TasksManager.getImpl().updateViewHolder(holder.id, holder);
-//
-//                task.start();
-//            } else if (action.equals(v.getResources().getString(R.string.delete))) {
-//                // to delete
-//                new File(TasksManager.getImpl().get(holder.position).getPath()).delete();
-//                holder.taskActionBtn.setEnabled(true);
-//                holder.updateNotDownloaded(FileDownloadStatus.INVALID_STATUS, 0, 0);
-//            }
-//        }
-//    };
 
     @Override
     public TaskItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -183,7 +32,6 @@ public class TaskItemAdapter extends RecyclerView.Adapter<TaskItemViewHolder> {
                         parent.getContext())
                         .inflate(R.layout.item_tasks_manager, parent, false));
 
-//        holder.taskActionBtn.setOnClickListener(taskActionOnClickListener);
         return holder;
     }
 
@@ -200,99 +48,13 @@ public class TaskItemAdapter extends RecyclerView.Adapter<TaskItemViewHolder> {
 
         holder.taskActionBtn.setEnabled(true);
 
-        final BaseDownloadTask task = FileDownloader.getImpl().create(model.getUrl())
-                .setPath(model.getPath())
-                .setCallbackProgressTimes(100)
-                .setListener(TasksManager.getImpl().getListener());
-        // TODO: 2017/11/1 感觉没用注释掉
-//                TasksManager.getImpl().addTaskForViewHolder(task);
-        task.start();
-
-
         holder.taskActionBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CharSequence action = ((TextView) v).getText();
-                if (action.equals(v.getResources().getString(R.string.pause))) {
-                    // to pause
-                    FileDownloader.getImpl().pause(model.getId());
-                } else if (action.equals(v.getResources().getString(R.string.start))) {
-                    // to start
-                    // to start
-//                    final TasksManagerModel model = TasksManager.getImpl().get(holder.position);
-//                    final BaseDownloadTask task = FileDownloader.getImpl().create(model.getUrl())
-//                            .setPath(model.getPath())
-//                            .setCallbackProgressTimes(100)
-//                            .setListener(new FileDownloadSampleListener(){
-//
-//                                @Override
-//                                protected void pending(BaseDownloadTask task, int soFarBytes, int totalBytes) {
-//                                    super.pending(task, soFarBytes, totalBytes);
-//                                    holder.updateDownloading(FileDownloadStatus.pending, soFarBytes
-//                                            , totalBytes);
-//                                    holder.taskStatusTv.setText(R.string.tasks_manager_demo_status_pending);
-//                                }
-//
-//                                @Override
-//                                protected void started(BaseDownloadTask task) {
-//                                    super.started(task);
-//                                    holder.taskStatusTv.setText(R.string.tasks_manager_demo_status_started);
-//                                }
-//
-//                                @Override
-//                                protected void connected(BaseDownloadTask task, String etag, boolean isContinue, int soFarBytes, int totalBytes) {
-//                                    super.connected(task, etag, isContinue, soFarBytes, totalBytes);
-//                                    holder.updateDownloading(FileDownloadStatus.connected, soFarBytes
-//                                            , totalBytes);
-//                                    holder.taskStatusTv.setText(R.string.tasks_manager_demo_status_connected);
-//                                }
-//
-//                                @Override
-//                                protected void progress(BaseDownloadTask task, int soFarBytes, int totalBytes) {
-//                                    super.progress(task, soFarBytes, totalBytes);
-//                                    holder.updateDownloading(FileDownloadStatus.progress, soFarBytes
-//                                            , totalBytes);
-//                                }
-//
-//                                @Override
-//                                protected void completed(BaseDownloadTask task) {
-//                                    super.completed(task);
-//                                    holder.updateDownloaded();
-//                                    TasksManager.getImpl().removeTaskForViewHolder(task.getId());
-//                                }
-//
-//                                @Override
-//                                protected void paused(BaseDownloadTask task, int soFarBytes, int totalBytes) {
-//                                    super.paused(task, soFarBytes, totalBytes);
-//                                    holder.updateNotDownloaded(FileDownloadStatus.paused, soFarBytes, totalBytes);
-//                                    holder.taskStatusTv.setText(R.string.tasks_manager_demo_status_paused);
-//                                    TasksManager.getImpl().removeTaskForViewHolder(task.getId());
-//                                }
-//
-//                                @Override
-//                                protected void error(BaseDownloadTask task, Throwable e) {
-//                                    super.error(task, e);
-//                                    holder.updateNotDownloaded(FileDownloadStatus.error, task.getLargeFileSoFarBytes()
-//                                            , task.getLargeFileTotalBytes());
-//                                    TasksManager.getImpl().removeTaskForViewHolder(task.getId());
-//                                }
-//
-//                            });
-//
-//                    // TODO: 2017/11/1 感觉没用先注释掉
-////                TasksManager.getImpl().addTaskForViewHolder(task);
-////
-////                TasksManager.getImpl().updateViewHolder(holder.id, holder);
-//
-//                    task.start();
-                } else if (action.equals(v.getResources().getString(R.string.delete))) {
-                    // to delete
-//                    new File(TasksManager.getImpl().get(position).getPath()).delete();
-//                    holder.taskActionBtn.setEnabled(true);
-//                    holder.updateNotDownloaded(FileDownloadStatus.INVALID_STATUS, 0, 0);
-                }
+
             }
         });
+        final int id = FileDownloadUtils.generateId(model.getUrl(), TasksManager.getImpl().createPath(model.getUrl()));
 
         /**
          * 下面的状态要根据上面搞 所以这里先看上面
@@ -324,6 +86,56 @@ public class TaskItemAdapter extends RecyclerView.Adapter<TaskItemViewHolder> {
             holder.taskStatusTv.setText(R.string.tasks_manager_demo_status_loading);
             holder.taskActionBtn.setEnabled(false);
         }
+
+        DownloadManager.DownloadStatusUpdater aActivityUpdater = new DownloadManager.DownloadStatusUpdater(){
+
+            @Override
+            public void blockComplete(BaseDownloadTask task) {
+
+            }
+            @Override
+            public void update(BaseDownloadTask task) {
+                if (task != null){
+                    if (task.getId() == id){
+                        final int status = task.getStatus();
+                        switch (status){
+                            case FileDownloadStatus.pending:
+                                holder.updateDownloading(status, TasksManager.getImpl().getSoFar(model.getId())
+                                        , TasksManager.getImpl().getTotal(model.getId()));
+                                break;
+                            case FileDownloadStatus.connected:
+                                holder.updateDownloading(status, TasksManager.getImpl().getSoFar(model.getId())
+                                        , TasksManager.getImpl().getTotal(model.getId()));
+                                break;
+                            case FileDownloadStatus.started:
+                                holder.updateDownloading(status, TasksManager.getImpl().getSoFar(model.getId())
+                                        , TasksManager.getImpl().getTotal(model.getId()));
+                                break;
+                            case FileDownloadStatus.progress:
+                                holder.updateDownloading(status, TasksManager.getImpl().getSoFar(model.getId())
+                                        , TasksManager.getImpl().getTotal(model.getId()));
+                                break;
+                            case FileDownloadStatus.paused:
+                                holder.updateNotDownloaded(status, TasksManager.getImpl().getSoFar(model.getId())
+                                        , TasksManager.getImpl().getTotal(model.getId()));
+                                break;
+                            case FileDownloadStatus.error:
+                                holder.updateNotDownloaded(status, TasksManager.getImpl().getSoFar(model.getId())
+                                        , TasksManager.getImpl().getTotal(model.getId()));
+                                break;
+                            case FileDownloadStatus.completed:
+                                holder.updateDownloaded();
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+            }
+        };
+
+        DownloadManager.getImpl().addUpdater(aActivityUpdater);
+
     }
 
     //第八步

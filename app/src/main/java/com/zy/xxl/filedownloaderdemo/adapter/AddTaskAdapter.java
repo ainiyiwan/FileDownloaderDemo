@@ -28,10 +28,15 @@ import java.util.List;
 public class AddTaskAdapter extends BaseQuickAdapter<AddTaskModel, BaseViewHolder> {
 
     private Context context;
+    private BaseDownloadTask task;
 
     public AddTaskAdapter(int layoutResId, @Nullable List<AddTaskModel> data, Context context) {
         super(layoutResId, data);
         this.context = context;
+    }
+
+    public void setTask(BaseDownloadTask task){
+        this.task  = task;
     }
 
     @Override
@@ -73,18 +78,19 @@ public class AddTaskAdapter extends BaseQuickAdapter<AddTaskModel, BaseViewHolde
 
                 helper.getView(R.id.task_action_btn).setClickable(false);
                 DownloadManager.getImpl().startDownload(model.url, TasksManager.getImpl().createPath(model.url));
+                TasksManager.getImpl().addTask(model.url);
             }
         });
 
-//        if (!DownloadManager.getImpl().idList.contains(id)){
-            DownloadManager.DownloadStatusUpdater aActivityUpdater = new DownloadManager.DownloadStatusUpdater(){
+        DownloadManager.DownloadStatusUpdater aActivityUpdater = new DownloadManager.DownloadStatusUpdater(){
 
-                @Override
-                public void blockComplete(BaseDownloadTask task) {
+            @Override
+            public void blockComplete(BaseDownloadTask task) {
 
-                }
-                @Override
-                public void update(BaseDownloadTask task) {
+            }
+            @Override
+            public void update(BaseDownloadTask task) {
+                if (task != null){
                     if (task.getId() == id){
                         final int status = task.getStatus();
                         switch (status){
@@ -118,10 +124,10 @@ public class AddTaskAdapter extends BaseQuickAdapter<AddTaskModel, BaseViewHolde
                         }
                     }
                 }
-            };
+            }
+        };
 
-            DownloadManager.getImpl().addUpdater(aActivityUpdater, id);
-//        }
+        DownloadManager.getImpl().addUpdater(aActivityUpdater);
 
     }
 

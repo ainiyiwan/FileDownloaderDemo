@@ -5,9 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.liulishuo.filedownloader.FileDownloader;
 import com.zy.xxl.filedownloaderdemo.R;
 import com.zy.xxl.filedownloaderdemo.adapter.TaskItemAdapter;
+import com.zy.xxl.filedownloaderdemo.manager.DownloadManager;
 import com.zy.xxl.filedownloaderdemo.manager.TasksManager;
 
 import java.lang.ref.WeakReference;
@@ -52,10 +52,8 @@ public class TasksManagerDemoActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        TasksManager.getImpl().onDestroy();
-        adapter = null;
-        FileDownloader.getImpl().pauseAll();
         super.onDestroy();
+        DownloadManager.getImpl().clearUpdater();
     }
 
 }

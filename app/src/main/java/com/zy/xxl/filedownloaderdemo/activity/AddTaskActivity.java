@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import com.zy.xxl.filedownloaderdemo.R;
 import com.zy.xxl.filedownloaderdemo.adapter.AddTaskAdapter;
 import com.zy.xxl.filedownloaderdemo.constant.Constant;
+import com.zy.xxl.filedownloaderdemo.manager.DownloadManager;
 import com.zy.xxl.filedownloaderdemo.manager.TasksManager;
 import com.zy.xxl.filedownloaderdemo.model.AddTaskModel;
 
@@ -43,7 +44,7 @@ public class AddTaskActivity extends AppCompatActivity {
 
     private void getData() {
         final int demoSize = Constant.BIG_FILE_URLS.length;
-        for (int i = 0; i < demoSize; i++) {
+        for (int i = 0; i < demoSize - 4; i++) {
             AddTaskModel model = new AddTaskModel(Constant.BING_FILE_NAME[i],
                     Constant.BIG_FILE_URLS[i],
                     Constant.BIG_ICON_URLS[i]);
@@ -67,9 +68,7 @@ public class AddTaskActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        FileDownloader.getImpl().pauseAll();
-//        DownloadManager.getImpl().removeUpdater(aActivityUpdater);
-
+        DownloadManager.getImpl().clearUpdater();
 
     }
 }

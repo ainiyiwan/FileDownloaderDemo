@@ -25,7 +25,6 @@ public class DownloadManager {
     }
 
     private ArrayList<DownloadStatusUpdater> updaterList = new ArrayList<>();
-    public ArrayList<Integer> idList = new ArrayList<>();
 
     public void startDownload(final String url, final String path){
         FileDownloader.getImpl().create(url)
@@ -34,11 +33,9 @@ public class DownloadManager {
                 .start();
     }
 
-    public void addUpdater(final DownloadStatusUpdater updater, int id) {
+    public void addUpdater(final DownloadStatusUpdater updater) {
         if (!updaterList.contains(updater) ) {
             int size = updaterList.size();
-            int size01 = idList.size();
-//            idList.add(id);
             updaterList.add(updater);
         }
     }
@@ -49,7 +46,6 @@ public class DownloadManager {
 
     public void clearUpdater(){
         updaterList.clear();
-        idList.clear();
     }
 
 
