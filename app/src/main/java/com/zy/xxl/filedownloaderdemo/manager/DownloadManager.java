@@ -4,8 +4,8 @@ import com.liulishuo.filedownloader.BaseDownloadTask;
 import com.liulishuo.filedownloader.FileDownloadListener;
 import com.liulishuo.filedownloader.FileDownloader;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Author ： zhangyang
@@ -24,7 +24,7 @@ public class DownloadManager {
         return HolderClass.INSTANCE;
     }
 
-    private ArrayList<DownloadStatusUpdater> updaterList = new ArrayList<>();
+    private HashMap<Integer, DownloadStatusUpdater> hashMap = new HashMap<>();
 
     public void startDownload(final String url, final String path){
         FileDownloader.getImpl().create(url)
@@ -33,19 +33,13 @@ public class DownloadManager {
                 .start();
     }
 
-    public void addUpdater(final DownloadStatusUpdater updater) {
-        if (!updaterList.contains(updater) ) {
-            int size = updaterList.size();
-            updaterList.add(updater);
-        }
+    public void addUpdater(final int id, final DownloadStatusUpdater updater) {
+        hashMap.put(id, updater);
     }
 
-    public boolean removeUpdater(final DownloadStatusUpdater updater) {
-        return updaterList.remove(updater);
-    }
 
     public void clearUpdater(){
-        updaterList.clear();
+        hashMap.clear();
     }
 
 
@@ -99,16 +93,23 @@ public class DownloadManager {
     };
 
     private void blockComplete1(final BaseDownloadTask task){
-        final List<DownloadStatusUpdater> updaterListCopy = (List<DownloadStatusUpdater>) updaterList.clone();
-        for (DownloadStatusUpdater downloadStatusUpdater : updaterListCopy) {
-            downloadStatusUpdater.blockComplete(task);
+        final HashMap<Integer, DownloadStatusUpdater> hashMaps = (HashMap<Integer, DownloadStatusUpdater>) hashMap.clone();
+
+        Iterator iterator = hashMaps.keySet().iterator();
+        while (iterator.hasNext()) {
+            Integer key = (Integer) iterator.next();
+            hashMaps.get(key).blockComplete(task);
         }
     }
 
     private void update(final BaseDownloadTask task){
-        final List<DownloadStatusUpdater> updaterListCopy = (List<DownloadStatusUpdater>) updaterList.clone();
-        for (DownloadStatusUpdater downloadStatusUpdater : updaterListCopy) {
-            downloadStatusUpdater.update(task);
+
+        final HashMap<Integer, DownloadStatusUpdater> hashMaps = (HashMap<Integer, DownloadStatusUpdater>) hashMap.clone();
+
+        Iterator iterator = hashMaps.keySet().iterator();
+        while (iterator.hasNext()) {
+            Integer key = (Integer) iterator.next();
+            hashMaps.get(key).update(task);
         }
     }
 

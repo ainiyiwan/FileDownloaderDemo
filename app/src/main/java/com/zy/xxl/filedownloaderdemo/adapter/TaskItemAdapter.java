@@ -146,7 +146,7 @@ public class TaskItemAdapter extends RecyclerView.Adapter<TaskItemViewHolder> {
             }
         };
 
-        DownloadManager.getImpl().addUpdater(aActivityUpdater);
+        DownloadManager.getImpl().addUpdater(id, aActivityUpdater);
 
     }
 

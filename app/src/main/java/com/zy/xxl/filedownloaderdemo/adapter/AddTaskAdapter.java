@@ -137,7 +137,7 @@ public class AddTaskAdapter extends BaseQuickAdapter<AddTaskModel, BaseViewHolde
             }
         };
 
-        DownloadManager.getImpl().addUpdater(aActivityUpdater);
+        DownloadManager.getImpl().addUpdater(id, aActivityUpdater);
 
     }
 
