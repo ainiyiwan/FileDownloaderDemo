@@ -52,7 +52,8 @@ public class TasksManagerDemoActivity extends AppCompatActivity {
 
         TasksManager.getImpl().onCreate1(new WeakReference<>(this));
         TasksManager.getImpl().initData();
-//        FileDownloader.getImpl().pauseAll();
+
+        FileDownloader.getImpl().pauseAll();
     }
 
     public void postNotifyDataChanged() {
@@ -101,6 +102,7 @@ public class TasksManagerDemoActivity extends AppCompatActivity {
             File file = new File(FileDownloadUtils.getDefaultSaveRootPath() + File.separator + "MRXZMedia");
             CleanUtils.cleanCustomCache(file);
             TasksManager.getImpl().initData();
+            FileDownloader.getImpl().clearAllTaskData();
             adapter.notifyDataSetChanged();
         }
     }

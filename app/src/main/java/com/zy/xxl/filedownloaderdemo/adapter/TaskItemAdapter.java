@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.liulishuo.filedownloader.BaseDownloadTask;
+import com.liulishuo.filedownloader.FileDownloader;
 import com.liulishuo.filedownloader.model.FileDownloadStatus;
 import com.liulishuo.filedownloader.util.FileDownloadUtils;
 import com.zy.xxl.filedownloaderdemo.R;
@@ -57,7 +58,8 @@ public class TaskItemAdapter extends RecyclerView.Adapter<TaskItemViewHolder> {
                     // to delete
                     boolean delSuc = TasksManager.getImpl().delTask(model.getPath());
                     if (delSuc){
-                        new File(TasksManager.getImpl().get(holder.position).getPath()).delete();
+                        FileDownloader.getImpl().clear(model.getId(),TasksManager.getImpl().get(holder.position).getPath());
+
                         TasksManager.getImpl().initData();
                         notifyItemRemoved(holder.getAdapterPosition());
                     }
